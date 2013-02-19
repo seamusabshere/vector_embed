@@ -8,7 +8,7 @@ class VectorEmbed
         1
       when FalseClass, 'false'
         -1 
-      when NilClass, 'null', BLANK
+      when NilClass, 'null'
         0
       else
         raise ArgumentError, "Can't embed #{v.inspect} in boolean mode."

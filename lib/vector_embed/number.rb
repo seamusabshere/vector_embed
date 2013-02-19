@@ -9,7 +9,7 @@ class VectorEmbed
         else
           v
         end
-        num > 99_999 ? ('%e' % num) : num
+        num > 1e12 ? ('%.10e' % num) : num
       end
     end
 

@@ -38,7 +38,7 @@ describe VectorEmbed do
     v.line(1, 1 => '        ').should == '1 1:0'
   end
 
-  it "in string mode, treats true/false/nil as strings" do
+  it "in phrase mode, treats true/false/nil as strings" do
     v = VectorEmbed.new
     v.line(1, 1 => 'foo').should == "1 1:#{MurmurHash3::V32.str_hash('foo')}"
     v.line(1, 1 => true).should == "1 1:#{MurmurHash3::V32.str_hash('true')}"
@@ -46,7 +46,7 @@ describe VectorEmbed do
     v.line(1, 1 => nil).should == "1 1:#{MurmurHash3::V32.str_hash('')}"
   end
 
-  it "in string mode, treats blanks literally" do
+  it "in phrase mode, treats blanks literally" do
     v = VectorEmbed.new
     v.line(1, 1 => 'foo').should == "1 1:#{MurmurHash3::V32.str_hash('foo')}"
     v.line(1, 1 => '').should == "1 1:#{MurmurHash3::V32.str_hash('')}"

@@ -21,6 +21,16 @@ describe VectorEmbed do
     v.line(5, 7 => 13).should == '5 7:13'
   end
 
+  it "orders feature names" do
+    v = VectorEmbed.new
+    v.line(5, 88 => 1, 1 => 9, 55 => 3).should == '5 1:9 55:3 88:1'
+  end
+
+  it "allows arrays as feature values" do
+    v = VectorEmbed.new
+    v.line(5, 'foo' => [7,13,19]).should == "5 #{MurmurHash3::V32.str_hash('foo_1')}:13 #{MurmurHash3::V32.str_hash('foo_0')}:7 #{MurmurHash3::V32.str_hash('foo_2')}:19"
+  end
+
   it "in number mode, treats nil or blank as 0" do
     v = VectorEmbed.new
     v.line(1, 1 => nil).should == '1 1:0'

@@ -1,50 +1,101 @@
 require 'spec_helper'
 
 describe VectorEmbed do
-  it "supports true/false/nil labels" do
+  it "represents true/false/nil as 1/-1/0" do
     v = VectorEmbed.new
-    v.line(true,  a: 9).should == '1 1:9'
-    v.line(false, a: 9).should == '-1 1:9'
-    v.line(nil,   a: 9).should == '0 1:9'
+    v.line(true,  7 => true ).should == '1 7:1'
+    v.line(false, 7 => false).should == '-1 7:-1'
+    v.line(nil,   7 => nil  ).should == '0 7:0'
   end
 
-  it "supports numeric labels" do
+  it "represents numbers as numbers" do
     v = VectorEmbed.new
-    v.line(5, a: 9).should == '5 1:9'
-    v.line(5.0, a: 9).should == '5.0 1:9'
-    v.line(5.1, a: 9).should == '5.1 1:9'
+    v.line(5,   1 => 9).should == '5 1:9'
+    v.line(5.0, 1 => 9).should == '5.0 1:9'
+    v.line(5.1, 1 => 9).should == '5.1 1:9'
   end
 
-  it "supports string labels" do
-    v = VectorEmbed.new
-    v.line('foo', a: 9).should == '1 1:9'
-    v.line('foo', a: 9).should == '1 1:9'
-    v.line('bar', a: 9).should == '2 1:9'
-    v.line(5, a: 9).should == '3 1:9'
-    v.line(5, a: 9).should == '3 1:9'
-    v.line(8, a: 9).should == '4 1:9'
-  end
-
-  it "supports continuous feature names (rare?)" do
+  it "allows number feature names (rare?)" do
     v = VectorEmbed.new
     v.line(5, 3 => 9).should == '5 3:9'
     v.line(5, 7 => 13).should == '5 7:13'
   end
 
-  it "doesn't allow string labels after starting with numeric labels" do
+  it "in number mode, treats nil or blank as 0" do
     v = VectorEmbed.new
-    v.line(5, a: 9).should == '5 1:9'
-    lambda { v.line('foo', a: 9) }.should raise_error(ArgumentError, /Can't embed.*string.*continuous/)
+    v.line(1, 1 => nil).should == '1 1:0'
+    v.line(1, 1 => '').should == '1 1:0'
+    v.line(1, 1 => '        ').should == '1 1:0'
+  end
+
+  it "in string mode, treats true/false/nil as strings" do
+    v = VectorEmbed.new
+    v.line(1, 1 => 'foo').should == "1 1:#{MurmurHash3::V32.str_hash('foo')}"
+    v.line(1, 1 => true).should == "1 1:#{MurmurHash3::V32.str_hash('true')}"
+    v.line(1, 1 => false).should == "1 1:#{MurmurHash3::V32.str_hash('false')}"
+    v.line(1, 1 => nil).should == "1 1:#{MurmurHash3::V32.str_hash('')}"
+  end
+
+  it "in string mode, treats blanks literally" do
+    v = VectorEmbed.new
+    v.line(1, 1 => 'foo').should == "1 1:#{MurmurHash3::V32.str_hash('foo')}"
+    v.line(1, 1 => '').should == "1 1:#{MurmurHash3::V32.str_hash('')}"
+    v.line(1, 1 => '  ').should == "1 1:#{MurmurHash3::V32.str_hash('  ')}"
+    v.line(1, 1 => '   ').should == "1 1:#{MurmurHash3::V32.str_hash('   ')}"
+  end
+
+  it "represents strings as hashes" do
+    v = VectorEmbed.new
+    v.line('foo', 1 => 9).should == "#{MurmurHash3::V32.str_hash('foo')} 1:9"
+    v.line('bar', 1 => 9).should == "#{MurmurHash3::V32.str_hash('bar')} 1:9"
+  end
+
+  it "represents string values as hashes" do
+    v = VectorEmbed.new
+    v.line(1, a: :b                   ).should == "1 #{MurmurHash3::V32.str_hash('a')}:#{MurmurHash3::V32.str_hash('b')}"
+    v.line(1, 'oh hello' => 'mr world').should == "1 #{MurmurHash3::V32.str_hash('oh hello')}:#{MurmurHash3::V32.str_hash('mr world')}"
+  end
+
+  it "treats numbers as strings if hashes have been used before" do
+    v = VectorEmbed.new
+    v.line('foo', 1 => 9).should == "#{MurmurHash3::V32.str_hash('foo')} 1:9"
+    v.line(5, 1 => 9).should == "#{MurmurHash3::V32.str_hash('5')} 1:9"
+    v = VectorEmbed.new
+    v.line(1, a: :b).should == "1 #{MurmurHash3::V32.str_hash('a')}:#{MurmurHash3::V32.str_hash('b')}"
+    v.line(1, a: 13).should == "1 #{MurmurHash3::V32.str_hash('a')}:#{MurmurHash3::V32.str_hash('13')}"
+  end
+
+  it "allows mixed hashed and number feature values" do
+    v = VectorEmbed.new
+    v.line(1, a: :b).should == "1 #{MurmurHash3::V32.str_hash('a')}:#{MurmurHash3::V32.str_hash('b')}"
+    v.line(1, a: 13).should == "1 #{MurmurHash3::V32.str_hash('a')}:#{MurmurHash3::V32.str_hash('13')}"
+    v.line(1, 1 => 9).should == "1 #{MurmurHash3::V32.str_hash('1')}:9" # 9 is not hashed, 1 is
+  end
+
+  it "doesn't allow true/false in number mode" do
+    v = VectorEmbed.new
+    v.line(1, 1 => 9).should == '1 1:9'
+    lambda { v.line(true, 1 => 9) }.should raise_error(ArgumentError, /Can't embed.*number/)
+  end
+
+  it "doesn't allow strings in number mode" do
+    v = VectorEmbed.new
+    v.line(5, 1 => 9).should == '5 1:9'
+    lambda { v.line('foo', 1 => 9) }.should raise_error(ArgumentError, /Can't embed.*number/)
   end
 
   it "embeds numbers as numbers" do
     v = VectorEmbed.new
-    v.line(5, a: 9, b: 13.5).should == '5 1:9 2:13.5'
+    v.line(5, 1 => 9, 2 => 13.5).should == '5 1:9 2:13.5'
   end
 
   it "uses scientific notation for large numbers" do
     v = VectorEmbed.new
-    v.line(5, a: 8.12e9).should == '5 1:8.120000e+09'
-    v.line(5, a: '8.12e9').should == '5 1:8.120000e+09'
+    v.line(5, 1 => 8.12e9).should == '5 1:8.120000e+09'
+  end
+
+  it "detects numbers in strings" do
+    v = VectorEmbed.new
+    v.line(5, 1 => '8.12e9').should == '5 1:8.120000e+09'
   end
 end

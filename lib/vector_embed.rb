@@ -1,6 +1,7 @@
 require 'vector_embed/version'
-require 'vector_embed/dictionary'
-require 'vector_embed/continuous'
+require 'vector_embed/phrase'
+require 'vector_embed/number'
+require 'vector_embed/boolean'
 
 require 'digest/md5'
 
@@ -8,10 +9,12 @@ class VectorEmbed
   class << self
     def pick_tokenizer(v)
       case v
-      when NilClass, TrueClass, FalseClass, Numeric, JUST_A_NUMBER
-        Continuous.new
+      when Numeric, JUST_A_NUMBER
+        Number.new
+      when NilClass, TrueClass, FalseClass, 'true', 'false', 'null'
+        Boolean.new
       else
-        Dictionary.new
+        Phrase.new
       end
     end
   end

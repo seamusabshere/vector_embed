@@ -63,7 +63,7 @@ You get the idea: ("the" has been filtered out by stop words)
     3426202:1 # murmur3("notes\x00brown"):1
     5079692:1 # murmur3("notes\x00fox"):1
 
-## Byte n-grams
+### Byte n-grams
 
     >> v = VectorEmbed.new ngram_len: 2, ngram_delim: ''
     => #<VectorEmbed:0x007fd60337ea20 [...]>

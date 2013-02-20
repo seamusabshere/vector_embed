@@ -68,8 +68,8 @@ describe VectorEmbed do
 
     it "allows mixed string and number feature values" do
       v = VectorEmbed.new
-      v.line(1, a: :b).should == "1 #{l_h('a')}:#{h('b')}"
-      v.line(1, a: 13).should == "1 #{l_h('a')}:#{h('13')}"
+      v.line(1, a: :b).should == "1 #{l_h("a\x00b")}:1"
+      v.line(1, a: 13).should == "1 #{l_h("a\x0013")}:1"
       v.line(1, 1 => 9).should == "1 #{l_h('1')}:9" # 9 is not hashed, 1 is
     end
   end
@@ -95,35 +95,35 @@ describe VectorEmbed do
       v.line(1, 1 => '9e9').should == "1 #{l_h('1')}:9000000000.0"
     end
 
-    it "stores strings as hashes, normalizing whitespace" do
+    it "stores strings as m-category attributes" do
       v = VectorEmbed.new
-      v.line(1, 1 => 'sfh').should == "1 #{l_h('1')}:#{h('sfh')}"
-      v.line(1, 1 => 'mfh').should == "1 #{l_h('1')}:#{h('mfh')}"
-      v.line(1, 1 => 'foo bar').should == "1 #{l_h('1')}:#{h('foo bar')}"
-      v.line(1, 1 => 'foo  bar ').should == "1 #{l_h('1')}:#{h('foo bar')}"
-      v.line(1, 1 => ' foo   bar  ').should == "1 #{l_h('1')}:#{h('foo bar')}"
+      v.line(1, 1 => 'sfh').should == "1 #{l_h("1\x00sfh")}:1"
+      v.line(1, 1 => 'mfh').should == "1 #{l_h("1\x00mfh")}:1"
+      v.line(1, 1 => 'foo bar').should == "1 #{l_h("1\x00foo bar")}:1"
+      v.line(1, 1 => 'foo  bar ').should == "1 #{l_h("1\x00foo bar")}:1"
+      v.line(1, 1 => ' foo   bar  ').should == "1 #{l_h("1\x00foo bar")}:1"
     end
 
     it "in string mode, treats true/false/nil as strings" do
       v = VectorEmbed.new
-      v.line(1, 1 => 'foo').should == "1 #{l_h('1')}:#{h('foo')}"
-      v.line(1, 1 => true).should == "1 #{l_h('1')}:#{h('true')}"
-      v.line(1, 1 => false).should == "1 #{l_h('1')}:#{h('false')}"
-      v.line(1, 1 => nil).should == "1 #{l_h('1')}:#{h('')}"
+      v.line(1, 1 => 'foo').should == "1 #{l_h("1\x00foo")}:1"
+      v.line(1, 1 => true).should == "1 #{l_h("1\x00true")}:1"
+      v.line(1, 1 => false).should == "1 #{l_h("1\x00false")}:1"
+      v.line(1, 1 => nil).should == "1 #{l_h("1\x00")}:1"
     end
 
     it "in string mode, treats numbers as strings" do
       v = VectorEmbed.new
-      v.line(1, 1 => 'foo').should == "1 #{l_h('1')}:#{h('foo')}"
-      v.line(1, 1 => 1).should == "1 #{l_h('1')}:#{h('1')}"
-      v.line(1, 1 => 5.4).should == "1 #{l_h('1')}:#{h('5.4')}"
-      v.line(1, 1 => 9e9).should == "1 #{l_h('1')}:#{h(9e9.to_s)}"
+      v.line(1, 1 => 'foo').should == "1 #{l_h("1\x00foo")}:1"
+      v.line(1, 1 => 1).should == "1 #{l_h("1\x001")}:1"
+      v.line(1, 1 => 5.4).should == "1 #{l_h("1\x005.4")}:1"
+      v.line(1, 1 => 9e9).should == "1 #{l_h("1\x00" + 9e9.to_s)}:1"
     end
 
     it "flattens and stores arrays" do
       v = VectorEmbed.new
       v.line(1, 'foo' => [7,13,19]).should == sortme("1 #{l_h("foo\x001")}:13 #{l_h("foo\x000")}:7 #{l_h("foo\x002")}:19")
-      v.line(1, 'bar' => ['a','b','c']).should == sortme("1 #{l_h("bar\x001")}:#{h('b')} #{l_h("bar\x000")}:#{h('a')} #{l_h("bar\x002")}:#{h('c')}")
+      v.line(1, 'bar' => ['a','b','c']).should == sortme("1 #{l_h("bar\x001\x00b")}:1 #{l_h("bar\x000\x00a")}:1 #{l_h("bar\x002\x00c")}:1")
     end
 
     it "in number mode, treats null as 0" do
@@ -190,6 +190,11 @@ describe VectorEmbed do
       v.line(1, 1 => 'foo or').should == "1 #{l_h("1\x00ngram\x00foo")}:1"
       v.line(1, 1 => 'foo the bar').should == "1 #{l_h("1\x00ngram\x00bar")}:1 #{l_h("1\x00ngram\x00foo")}:1"
       v.line(1, 1 => 'foo bar and').should == "1 #{l_h("1\x00ngram\x00bar")}:1 #{l_h("1\x00ngram\x00foo")}:1"
+    end
+
+    it "doesn't do anything weird when you have multiple features" do
+      v = VectorEmbed.new
+      v.line(1, 1 => 'foo', 2 => 'bar', 'baz' => 'zoo').should == sortme("1 #{l_h("1\x00foo")}:1 #{l_h("2\x00bar")}:1 #{l_h("baz\x00zoo")}:1")
     end
 
   end

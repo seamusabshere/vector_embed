@@ -1,7 +1,5 @@
 require 'vector_embed/maker'
 
-require 'murmurhash3'
-
 class VectorEmbed
   class Maker
     class Phrase < Maker
@@ -11,9 +9,9 @@ class VectorEmbed
         end
       end
 
-      def value(v)
+      def pairs(v)
         v = parent.preprocess v.to_s
-        MurmurHash3::V32.str_hash v
+        [ [ Maker.index(k, v), 1 ] ]
       end
     end
   end

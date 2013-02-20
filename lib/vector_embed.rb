@@ -1,47 +1,42 @@
 require 'vector_embed/version'
-require 'vector_embed/phrase'
-require 'vector_embed/ngram'
-require 'vector_embed/number'
-require 'vector_embed/boolean'
+require 'vector_embed/maker'
 
 require 'vector_embed/stop_word'
 
-require 'digest/md5'
-
 class VectorEmbed
   # http://stackoverflow.com/questions/638565/parsing-scientific-notation-sensibly
-  JUST_A_NUMBER = /\A[+\-]?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?\z/
+  JUST_A_NUMBER = /\A\s*[+\-]?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?\s*\z/
   BLANK = /\A\s*\z/
+  NULL_BYTE = "\x00"
 
   attr_reader :options
 
   def initialize(options = {})
     @mutex = Mutex.new
-    @feature_value_tokenizers = {}
+    @feature_makers = {}
     @options = options.dup
   end
 
-  def line(label, features)
-    label_token = label_token label
-    feature_token_pairs = features.inject([]) do |memo, (k, v)|
+  def line(label, features = {})
+    feature_pairs = features.inject([]) do |memo, (k, v)|
       case v
       when Array
         v.each_with_index do |vv, i|
-          memo.concat feature_token_pairs("#{k}_#{i}", vv)
+          memo.concat feature_maker([k, i].join(NULL_BYTE), vv).pairs(vv)
         end
       else
-        memo.concat feature_token_pairs(k, v)
+        memo.concat feature_maker(k, v).pairs(v)
       end
       memo
-    end.compact.sort_by do |tok_k, tok_v|
-      tok_k
+    end.compact.sort_by do |k_value, _|
+      k_value
     end.map do |pair|
       pair.join ':'
     end
-    ([label_token] + feature_token_pairs).join ' '
+    ([label_maker(label).value(label)] + feature_pairs).join ' '
   end
 
-  def remove_stop_words(v)
+  def preprocess(v)
     StopWord.remove stop_words, v
   end
 
@@ -53,53 +48,15 @@ class VectorEmbed
     end
   end
 
-  def label_token(v)
-    label_tokenizer(v).token v
-  end
-
-  def feature_token_pairs(k, v)
-    v_tokens = feature_value_tokenizer(k, v).token v
-    case v_tokens
-    when Array
-      v_tokens.map do |vv|
-        feature_token_pairs(vv, true)
-      end
-    else
-      k_token = feature_key_tokenizer(k).token k
-      [ [ k_token, v_tokens ] ]
+  def label_maker(label)
+    @label_maker || @mutex.synchronize do
+      @label_maker ||= Maker.pick([Maker::Boolean, Maker::Number], 'label', label, self)
     end
   end
 
-  def label_tokenizer(v)
-    @label_tokenizer || @mutex.synchronize do
-      @label_tokenizer ||= pick_tokenizer(v)
-    end
-  end
-
-  def feature_key_tokenizer(k)
-    @feature_key_tokenizer || @mutex.synchronize do
-      @feature_key_tokenizer ||= pick_tokenizer(k)
-    end
-  end
-
-  def feature_value_tokenizer(k, v)
-    @feature_value_tokenizers[k] || @mutex.synchronize do
-      @feature_value_tokenizers[k] ||= pick_tokenizer(v, true)
-    end
-  end
-
-  def pick_tokenizer(v, allow_ngram = false)
-    case v
-    when Numeric, JUST_A_NUMBER
-      Number.new
-    when NilClass, TrueClass, FalseClass, 'true', 'false', 'null'
-      Boolean.new
-    else
-      if allow_ngram and options[:ngram_len]
-        Ngram.new self
-      else
-        Phrase.new self
-      end
+  def feature_maker(k, v)
+    @feature_makers[k] || @mutex.synchronize do
+      @feature_makers[k] ||= Maker.pick([Maker::Boolean, Maker::Number, Maker::Ngram, Maker::Phrase], k, v, self)
     end
   end
 end

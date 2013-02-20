@@ -10,6 +10,7 @@ class VectorEmbed
     class << self
       def pick(choices, k, first_v, parent)
         if klass = choices.detect { |klass| klass.want?(k, first_v, parent) }
+          parent.logger.debug { "Interpreting #{k.inspect} as #{klass.name.split('::').last} given first value #{first_v.inspect}" }
           klass.new k, parent
         else
           raise "Can't use #{first_v.class} for #{k.inspect} given #{first_v.inspect} and choices #{choices.inspect}"

@@ -1,3 +1,5 @@
+require 'logger'
+
 require 'vector_embed/version'
 require 'vector_embed/maker'
 
@@ -10,10 +12,12 @@ class VectorEmbed
   NULL_BYTE = "\x00"
 
   attr_reader :options
+  attr_accessor :logger
 
   def initialize(options = {})
     @mutex = Mutex.new
     @feature_makers = {}
+    @logger = options[:logger] || (l = Logger.new($stderr); l.level = Logger::INFO; l)
     @options = options.dup
   end
 

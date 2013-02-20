@@ -21,7 +21,7 @@ class VectorEmbed
         when FalseClass, 'false', 'f', 'no', 'off'
           0
         else
-          raise "Can't embed #{v.inspect} in boolean mode"
+          raise "Can't embed #{v.inspect} in boolean feature #{k.inspect}"
         end
       end
 
@@ -34,7 +34,7 @@ class VectorEmbed
         when NilClass, 'null', BLANK
           [ [ Maker.index(k, 'null'), 1 ] ]
         else
-          raise ArgumentError, "Can't embed #{v.inspect} in boolean mode."
+          raise ArgumentError, "Can't embed #{v.inspect} in boolean feature #{k.inspect}"
         end
       end
     end

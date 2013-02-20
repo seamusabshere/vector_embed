@@ -6,9 +6,9 @@ Gem::Specification.new do |gem|
   gem.version       = VectorEmbed::VERSION
   gem.authors       = ["Seamus Abshere"]
   gem.email         = ["seamus@abshere.net"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.description   = %q{Vector embedding of strings, booleans, numerics, and arrays into LIBSVM / LIBLINEAR format.}
+  gem.summary       = %q{Vector embedding of strings, booleans, numerics, and arrays into LIBSVM / LIBLINEAR format.}
+  gem.homepage      = "https://github.com/seamusabshere/vector_embed"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
@@ -19,4 +19,5 @@ Gem::Specification.new do |gem|
   
   gem.add_development_dependency 'rspec'
   gem.add_development_dependency 'pry'
+  gem.add_development_dependency 'yard'
 end

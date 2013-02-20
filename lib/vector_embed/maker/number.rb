@@ -29,7 +29,7 @@ class VectorEmbed
         when NilClass
           0
         else
-          raise ArgumentError, "Can't embed #{v.inspect} in number mode."
+          raise ArgumentError, "Can't embed #{v.inspect} in number feature #{k.inspect}"
         end
       end
     end

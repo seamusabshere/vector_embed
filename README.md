@@ -4,6 +4,21 @@ Vector embedding of strings, booleans, numerics, and arrays into [LIBSVM](http:/
 
 Inspired by [Sally](http://www.mlsec.org/sally/), except `VectorEmbed` is meant to handle categorical and continuous data at the same time.
 
+## csv2libsvm
+
+    $ cat houses.csv
+    label,id,household_income,zip_code_id,construction
+    1,79fb8b0507eb,35893,53703,1904
+    1,afe0d686ba08,43708,53711,1977
+    1,ac128be4e6af,103214,53719,1999
+    1,d284de367cb5,49250,53704,1950
+    
+    $ csv2libsvm houses.csv
+    1 1191618:1904 1241082:1 1243483:35893 2357056:1 6439848:53703
+    1 1191618:1977 1243483:43708 2357056:1 2624875:1 6439848:53711
+    1 1191618:1999 1243483:103214 2357056:1 4080952:1 6439848:53719
+    1 1191618:1950 1243483:49250 2357056:1 6439848:53704 7695749:1
+
 ## Usage
 
 Create a `VectorEmbed` instance, which auto-detects and then remembers what kind of data goes into each feature:

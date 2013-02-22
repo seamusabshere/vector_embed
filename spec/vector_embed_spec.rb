@@ -79,10 +79,18 @@ describe VectorEmbed do
       v = VectorEmbed.new
       v.line(1, 1 => true).should == "1 #{l_h("1\x00true")}:1"
       v.line(1, 1 => 'true').should == "1 #{l_h("1\x00true")}:1"
+      v.line(1, 1 => 'TRUE').should == "1 #{l_h("1\x00true")}:1"
+      v.line(1, 1 => 't').should == "1 #{l_h("1\x00true")}:1"
+      v.line(1, 1 => 'T').should == "1 #{l_h("1\x00true")}:1"
       v.line(1, 1 => false).should == "1 #{l_h("1\x00false")}:1"
       v.line(1, 1 => 'false').should == "1 #{l_h("1\x00false")}:1"
+      v.line(1, 1 => 'FALSE').should == "1 #{l_h("1\x00false")}:1"
+      v.line(1, 1 => 'f').should == "1 #{l_h("1\x00false")}:1"
+      v.line(1, 1 => 'F').should == "1 #{l_h("1\x00false")}:1"
       v.line(1, 1 => nil).should == "1 #{l_h("1\x00null")}:1"
       v.line(1, 1 => 'null').should == "1 #{l_h("1\x00null")}:1"
+      v.line(1, 1 => 'NULL').should == "1 #{l_h("1\x00null")}:1"
+      v.line(1, 1 => '\N').should == "1 #{l_h("1\x00null")}:1"
     end
 
     it "stores numbers as numbers" do
@@ -130,6 +138,9 @@ describe VectorEmbed do
       v = VectorEmbed.new
       v.line(1, 1 => 9).should == "1 #{l_h('1')}:9"
       v.line(1, 1 => nil).should == "1 #{l_h('1')}:0"
+      v.line(1, 1 => 'null').should == "1 #{l_h('1')}:0"
+      v.line(1, 1 => 'NULL').should == "1 #{l_h('1')}:0"
+      v.line(1, 1 => '\N').should == "1 #{l_h('1')}:0"
     end
 
     it "doesn't allow embedding boolean in number mode or vice-versa" do

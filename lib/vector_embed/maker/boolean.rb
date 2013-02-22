@@ -6,7 +6,7 @@ class VectorEmbed
       class << self
         def want?(k, v, parent)
           case v
-          when NilClass, TrueClass, FalseClass, 'true', 'false', 'null'
+          when NilClass, TrueClass, FalseClass, TRUE, FALSE, T, F, NULL, SLASH_N
             true
           else
             false
@@ -16,9 +16,9 @@ class VectorEmbed
 
       def value(v)
         case v
-        when TrueClass, 'true', 't', 'yes', 'on'
+        when TrueClass, TRUE, T
           1
-        when FalseClass, 'false', 'f', 'no', 'off'
+        when FalseClass, FALSE, F
           0
         else
           raise "Can't embed #{v.inspect} in boolean feature #{k.inspect}"
@@ -27,11 +27,11 @@ class VectorEmbed
 
       def pairs(v)
         case v
-        when TrueClass, 'true', 't', 'yes', 'on'
+        when TrueClass, TRUE, T
           [ [ Maker.index(k, 'true'), 1 ] ]
-        when FalseClass, 'false', 'f', 'no', 'off'
+        when FalseClass, FALSE, F
           [ [ Maker.index(k, 'false'), 1 ] ]
-        when NilClass, 'null', BLANK
+        when NilClass, NULL, SLASH_N, BLANK
           [ [ Maker.index(k, 'null'), 1 ] ]
         else
           raise ArgumentError, "Can't embed #{v.inspect} in boolean feature #{k.inspect}"

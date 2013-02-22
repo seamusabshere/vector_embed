@@ -1,3 +1,14 @@
+0.1.0 / 2013-02-20
+
+* Enhancements
+
+  * csv2libsvm binary
+  * "null" and "NULL" are treated as nil (0 in number mode)
+
+* Breaking changes
+  
+  * yes', 'on' / 'no', 'off' no longer treated as true/false
+
 0.0.1 / 2013-02-20
 
 * First release!

@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+if File.exist?('Gemfile')
+  require 'bundler/setup'
+end
+
+require 'csv'
+require 'vector_embed'
+
+csv_path = ARGV[0]
+
+v = VectorEmbed.new
+CSV.foreach(csv_path, headers: :first_row) do |row|
+  features = row.to_hash
+  label = row.delete('label')[1]
+  puts v.line(label, features)
+end

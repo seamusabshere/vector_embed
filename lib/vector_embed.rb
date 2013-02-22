@@ -9,6 +9,12 @@ class VectorEmbed
   # http://stackoverflow.com/questions/638565/parsing-scientific-notation-sensibly
   JUST_A_NUMBER = /\A\s*[+\-]?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?\s*\z/
   BLANK = /\A\s*\z/
+  NULL = /\Anull\z/i
+  SLASH_N = '\N'
+  TRUE = /\Atrue\z/i
+  T = /\At\z/i
+  FALSE = /\Afalse\z/i
+  F = /\Af\z/i
   NULL_BYTE = "\x00"
 
   attr_reader :options

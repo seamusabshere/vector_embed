@@ -26,7 +26,7 @@ class VectorEmbed
         case v
         when Numeric, JUST_A_NUMBER
           Number.numify v
-        when NilClass
+        when NilClass, NULL, SLASH_N
           0
         else
           raise ArgumentError, "Can't embed #{v.inspect} in number feature #{k.inspect}"

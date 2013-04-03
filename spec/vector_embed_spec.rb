@@ -31,6 +31,29 @@ describe VectorEmbed do
     end
   end
 
+  describe 'using a dictionary' do
+    it "starts at feature label 1" do
+      v = VectorEmbed.new dict: {}
+      v.line(1, 'foo' => 5).should == "1 1:5"
+      v.line(1, 'bar' => 3).should == "1 2:3"
+      v.line(1, 'foo' => 3, 'bar' => 5).should == "1 1:3 2:5"
+    end
+
+    it "does not modify the original dict" do
+      orig = {}
+      v = VectorEmbed.new dict: orig
+      v.line(1, 'foo' => 5)
+      orig.should == {}
+    end
+
+    it "provides the latest dict on demand" do
+      require 'digest/md5'
+      v = VectorEmbed.new dict: {}
+      v.line(1, 'foo' => 5)
+      v.dict.should == { Digest::MD5.digest('foo') => 1 }
+    end
+  end
+
   # aka dimension indexes
   describe 'in feature keys' do
     it "stores values as their string equivalents" do

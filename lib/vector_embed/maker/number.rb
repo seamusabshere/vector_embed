@@ -4,7 +4,7 @@ class VectorEmbed
   class Maker
     class Number < Maker
       class << self
-        def want?(k, v, parent)
+        def want?(v, parent)
           v.is_a?(::Numeric) or v =~ JUST_A_NUMBER
         end
 

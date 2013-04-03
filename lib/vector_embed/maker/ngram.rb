@@ -4,7 +4,7 @@ class VectorEmbed
   class Maker
     class Ngram < Maker
       class << self
-        def want?(k, v, parent)
+        def want?(v, parent)
           parent.options[:ngram_len]
         end
       end
@@ -31,7 +31,7 @@ class VectorEmbed
         else
           raise "Word n-gram not supported yet"
         end.map do |ngram|
-          [ [ Maker.index(k, 'ngram', ngram), 1 ] ]
+          [ [ parent.index([k, 'ngram', ngram]), 1 ] ]
         end
       end
     end

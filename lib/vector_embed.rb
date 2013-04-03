@@ -1,4 +1,6 @@
 require 'logger'
+require 'digest/md5'
+require 'murmurhash3'
 
 require 'vector_embed/version'
 require 'vector_embed/maker'
@@ -16,15 +18,21 @@ class VectorEmbed
   FALSE = /\Afalse\z/i
   F = /\Af\z/i
   NULL_BYTE = "\x00"
+  LABEL_MAKERS =   [Maker::Boolean, Maker::Number]
+  FEATURE_MAKERS = [Maker::Boolean, Maker::Number, Maker::Ngram, Maker::Phrase]
 
   attr_reader :options
   attr_accessor :logger
+  attr_reader :dict
 
   def initialize(options = {})
+    @options = options.dup
     @mutex = Mutex.new
     @feature_makers = {}
     @logger = options[:logger] || (l = Logger.new($stderr); l.level = Logger::INFO; l)
-    @options = options.dup
+    if dict = @options.delete(:dict)
+      @dict = dict.dup
+    end
   end
 
   def line(label, features = {})
@@ -50,6 +58,18 @@ class VectorEmbed
     StopWord.remove stop_words, v
   end
 
+  def index(parts)
+    k = parts.join NULL_BYTE
+    if dict
+      k = Digest::MD5.digest k
+      dict[k] || @mutex.synchronize do
+        dict[k] ||= dict.length + 1
+      end
+    else
+      MurmurHash3::V32.str_hash(k).to_s[0..6].to_i
+    end
+  end
+
   private
 
   def stop_words
@@ -60,13 +80,13 @@ class VectorEmbed
 
   def label_maker(label)
     @label_maker || @mutex.synchronize do
-      @label_maker ||= Maker.pick([Maker::Boolean, Maker::Number], 'label', label, self)
+      @label_maker ||= Maker.pick(LABEL_MAKERS, 'label', label, self)
     end
   end
 
   def feature_maker(k, v)
     @feature_makers[k] || @mutex.synchronize do
-      @feature_makers[k] ||= Maker.pick([Maker::Boolean, Maker::Number, Maker::Ngram, Maker::Phrase], k, v, self)
+      @feature_makers[k] ||= Maker.pick(FEATURE_MAKERS, k, v, self)
     end
   end
 end

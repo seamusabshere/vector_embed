@@ -4,14 +4,14 @@ class VectorEmbed
   class Maker
     class Phrase < Maker
       class << self
-        def want?(k, v, parent)
+        def want?(v, parent)
           true
         end
       end
 
       def pairs(v)
         v = parent.preprocess v.to_s
-        [ [ Maker.index(k, v), 1 ] ]
+        [ [ parent.index([k, v]), 1 ] ]
       end
     end
   end

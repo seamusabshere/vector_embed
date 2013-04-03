@@ -12,6 +12,8 @@ csv_path = ARGV[0]
 v = VectorEmbed.new
 CSV.foreach(csv_path, headers: :first_row) do |row|
   features = row.to_hash
-  label = features.delete('label')
+  unless label = features.delete('label')
+    raise "No label found - do you have a column named 'label'?"
+  end
   puts v.line(label, features)
 end

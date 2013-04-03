@@ -1,3 +1,7 @@
+* Enhancements
+
+  * Better error message if you run csv2libsvm on a CSV without a "label" column
+
 0.1.0 / 2013-02-20
 
 * Enhancements

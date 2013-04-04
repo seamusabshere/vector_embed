@@ -1,3 +1,5 @@
+0.1.1 / 2013-04-04
+
 * Enhancements
 
   * If you pass a Hash as :dict, it will start feature labels at 1 rather than murmurhashing; you can then serialize VectorEmbed#dict

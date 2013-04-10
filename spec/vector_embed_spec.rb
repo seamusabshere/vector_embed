@@ -122,8 +122,8 @@ describe VectorEmbed do
       v.line(1, 1 => '9').should == "1 #{l_h('1')}:9"
       v.line(1, 1 => 5.4).should == "1 #{l_h('1')}:5.4"
       v.line(1, 1 => '5.4').should == "1 #{l_h('1')}:5.4"
-      v.line(1, 1 => 9e9).should == "1 #{l_h('1')}:9000000000.0"
-      v.line(1, 1 => '9e9').should == "1 #{l_h('1')}:9000000000.0"
+      v.line(1, 1 => 9e9).should == "1 #{l_h('1')}:9000000000"
+      v.line(1, 1 => '9e9').should == "1 #{l_h('1')}:9000000000"
     end
 
     it "stores strings as m-category attributes" do
@@ -186,12 +186,12 @@ describe VectorEmbed do
 
     it "uses scientific notation for large numbers" do
       v = VectorEmbed.new
-      v.line(5, 1 => 8.12e13).should == "5 #{l_h('1')}:8.1200000000e+13"
+      v.line(5, 1 => 8.12e27).should == "5 #{l_h('1')}:8.12e+27"
     end
 
     it "detects numbers in strings" do
       v = VectorEmbed.new
-      v.line(5, 1 => '8.12e13').should == "5 #{l_h('1')}:8.1200000000e+13"
+      v.line(5, 1 => '8.12e13').should == "5 #{l_h('1')}:81200000000000"
     end
 
     it "allows 2 byte n-grams" do

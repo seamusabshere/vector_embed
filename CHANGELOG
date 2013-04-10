@@ -1,3 +1,9 @@
+unreleased
+
+* Enhancements
+
+  * More concise number representations per https://github.com/scikit-learn/scikit-learn/pull/1849
+
 0.1.1 / 2013-04-04
 
 * Enhancements

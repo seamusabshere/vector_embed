@@ -18,7 +18,7 @@ class VectorEmbed
           else
             v
           end
-          num > 1e10 ? ('%.10e' % num) : num
+          '%.16g' % num
         end
       end
 

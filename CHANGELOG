@@ -1,3 +1,9 @@
+0.3.0 / 2013-05-14
+
+* Breaking changes
+
+  * If a value is nil, assume it's a number field (not a boolean field as before). Just a better assumption.
+
 0.2.0 / 2013-05-14
 
 * Breaking changes

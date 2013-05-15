@@ -6,7 +6,7 @@ class VectorEmbed
       class << self
         def want?(v, parent)
           case v
-          when NilClass, TrueClass, FalseClass, TRUE, FALSE, T, F, NULL, SLASH_N
+          when TrueClass, FalseClass, TRUE, FALSE, T, F
             true
           else
             false

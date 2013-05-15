@@ -5,7 +5,12 @@ class VectorEmbed
     class Number < Maker
       class << self
         def want?(v, parent)
-          v.is_a?(::Numeric) or v =~ JUST_A_NUMBER
+          case v
+          when Numeric, NilClass, NULL, SLASH_N
+            true
+          else
+            v =~ JUST_A_NUMBER
+          end
         end
 
         def numify(v)

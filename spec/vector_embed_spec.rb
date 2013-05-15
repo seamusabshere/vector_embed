@@ -268,6 +268,24 @@ describe VectorEmbed do
 
   end
 
+  describe 'hinting' do
+    it "lets you tell it what attribute type" do
+      v = VectorEmbed.new(features: { 1 => :Number })
+      v.line(3, 1 => nil)
+      v.line(3, 1 => nil).should == v.line(3, 1 => 0)
+      v.line(3, 1 => 'null').should == v.line(3, 1 => 0)
+      v.line(3, 1 => 'NULL').should == v.line(3, 1 => 0)
+      v.line(3, 1 => '\N').should == v.line(3, 1 => 0)
+      v = VectorEmbed.new(features: { 1 => :Phrase })
+      v.line(3, 1 => nil)
+      v.line(1, 1 => 'foo').should == "1 #{l_h("1\x00foo")}:1"
+      v.line(1, 1 => true).should == "1 #{l_h("1\x00true")}:1"
+      v.line(1, 1 => false).should == "1 #{l_h("1\x00false")}:1"
+      v.line(1, 1 => nil).should == "1 #{l_h("1\x00")}:1"
+      v.line(1, 1 => nil).should == v.line(1, 1 => '')
+    end
+  end
+
   private
 
   def h(v)

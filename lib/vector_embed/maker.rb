@@ -7,7 +7,10 @@ class VectorEmbed
   class Maker
     class << self
       def pick(choices, k, first_v, parent)
-        if klass = choices.detect { |klass| klass.want?(first_v, parent) }
+        if (feature_types = parent.options[:features]) and (type = feature_types.detect { |kk, v| kk.to_s == k.to_s })
+          klass = const_get type[1].to_sym
+          klass.new k, parent
+        elsif klass = choices.detect { |klass| klass.want?(first_v, parent) }
           parent.logger.debug { "Interpreting #{k.inspect} as #{klass.name.split('::').last} given first value #{first_v.inspect}" }
           klass.new k, parent
         else

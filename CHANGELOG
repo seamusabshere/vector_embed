@@ -1,3 +1,9 @@
+0.3.1 / 2013-05-14
+
+* Enhancements
+
+  * Allow hinting feature types with :features option... possible options are :Number, :Boolean, :Ngram, :Phrase
+
 0.3.0 / 2013-05-14
 
 * Breaking changes

@@ -170,6 +170,17 @@ describe VectorEmbed do
       v.line(1, 'bar' => ['a','b','c']).should == sortme("1 #{l_h("bar\x001\x00b")}:1 #{l_h("bar\x000\x00a")}:1 #{l_h("bar\x002\x00c")}:1")
     end
 
+    it "stores arrays with proper indices even if some values are zero" do
+      v = VectorEmbed.new
+      v.line(1, 'foo' => [0,99]).should == sortme("1 #{l_h("foo\x001")}:99")
+      v.line(1, 'foo' => [45,0]).should == sortme("1 #{l_h("foo\x000")}:45")
+      v.line(1, 'foo' => [45,99]).should == sortme("1 #{l_h("foo\x000")}:45 #{l_h("foo\x001")}:99")
+      v = VectorEmbed.new
+      v.line(1, 'foo' => [45,0,99]).should == sortme("1 #{l_h("foo\x000")}:45 #{l_h("foo\x002")}:99")
+      v.line(1, 'foo' => [45,0]).should == sortme("1 #{l_h("foo\x000")}:45")
+      v.line(1, 'foo' => [45,33,99]).should == sortme("1 #{l_h("foo\x000")}:45 #{l_h("foo\x001")}:33 #{l_h("foo\x002")}:99")
+    end
+
     it "in number mode, treats null as 0" do
       v = VectorEmbed.new
       v.line(1, 1 => 9).should == "1 #{l_h('1')}:9"

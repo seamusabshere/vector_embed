@@ -18,7 +18,9 @@ class VectorEmbed
           else
             v
           end
-          '%.16g' % num
+          if num.nonzero?
+            '%.16g' % num
+          end
         end
       end
 
@@ -27,7 +29,7 @@ class VectorEmbed
         when Numeric, JUST_A_NUMBER
           Number.numify v
         when NilClass, NULL, SLASH_N
-          0
+          nil
         else
           raise ArgumentError, "Can't embed #{v.inspect} in number feature #{k.inspect}"
         end

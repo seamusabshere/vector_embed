@@ -1,4 +1,6 @@
-unreleased
+* Breaking changes
+
+  * Per the whole point of sparse vectors, don't output numbers features with value 0
 
 * Enhancements
 

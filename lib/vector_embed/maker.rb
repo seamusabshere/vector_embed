@@ -29,11 +29,17 @@ class VectorEmbed
       when Array
         memo = []
         v.each_with_index do |vv, i|
-          memo << [ parent.index([k, i]), value(vv) ]
+          unless (vvv = value(vv)).nil?
+            memo << [ parent.index([k, i]), vvv ]
+          end
         end
         memo
       else
-        [ [ parent.index([k]), value(v) ] ]
+        if (vv = value(v)).nil?
+          []
+        else
+          [ [ parent.index([k]), value(v) ] ]
+        end
       end
     end
   end

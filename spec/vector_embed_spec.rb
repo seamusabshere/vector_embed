@@ -126,6 +126,19 @@ describe VectorEmbed do
       v.line(1, 1 => '9e9').should == "1 #{l_h('1')}:9000000000"
     end
 
+    it "does not output 0 in number attributes" do
+      v = VectorEmbed.new
+      v.line(3, 1 => 1)
+      v.line(3, 1 => 0).should == "3"
+      v.line(3, 1 => '0').should == "3"
+    end
+
+    it "treats nil like zero in number attributes" do
+      v = VectorEmbed.new
+      v.line(1, 1 => 1)
+      v.line(1, 1 => nil).should == v.line(1, 1 => 0)
+    end
+
     it "stores strings as m-category attributes" do
       v = VectorEmbed.new
       v.line(1, 1 => 'sfh').should == "1 #{l_h("1\x00sfh")}:1"
@@ -160,10 +173,10 @@ describe VectorEmbed do
     it "in number mode, treats null as 0" do
       v = VectorEmbed.new
       v.line(1, 1 => 9).should == "1 #{l_h('1')}:9"
-      v.line(1, 1 => nil).should == "1 #{l_h('1')}:0"
-      v.line(1, 1 => 'null').should == "1 #{l_h('1')}:0"
-      v.line(1, 1 => 'NULL').should == "1 #{l_h('1')}:0"
-      v.line(1, 1 => '\N').should == "1 #{l_h('1')}:0"
+      v.line(1, 1 => nil).should == v.line(1, 1 => 0)
+      v.line(1, 1 => 'null').should == v.line(1, 1 => 0)
+      v.line(1, 1 => 'NULL').should == v.line(1, 1 => 0)
+      v.line(1, 1 => '\N').should == v.line(1, 1 => 0)
     end
 
     it "doesn't allow embedding boolean in number mode or vice-versa" do

@@ -137,11 +137,16 @@ describe VectorEmbed do
     end
 
     it "can parse some dates" do
-      v = VectorEmbed.new(features: { 3 => :Date})
+      v = VectorEmbed.new
       v.line(1, 3 => '1999-12-31').should == "1 #{l_h('3')}:-1"
       v.line(1, 3 => '2000-1-1').should == "1"
       v.line(1, 3 => '2000-1-2').should == "1 #{l_h('3')}:1"
       v.line(1, 3 => '2000-1-3').should == "1 #{l_h('3')}:2"
+    end
+
+    it "doesn't die on nil dates" do
+      v = VectorEmbed.new(features: { 3 => :Date})
+      v.line(1, 3 => nil).should == "1"
     end
 
     it "does not output 0 in number attributes" do

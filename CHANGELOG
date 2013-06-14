@@ -1,3 +1,13 @@
+0.3.3 / 2013-06-14
+
+* Enhancement
+
+  * Auto-detect YYYY-MM-DD dates
+
+* Bug fixes
+
+  * Don't die on nil date
+
 0.3.2 / 2013-06-14
 
 * Enhancements

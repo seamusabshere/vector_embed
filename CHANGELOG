@@ -1,3 +1,9 @@
+0.3.2 / 2013-06-14
+
+* Enhancements
+
+  * Output dates as days since 2000-01-01 (pos or neg)
+
 0.3.1 / 2013-05-14
 
 * Enhancements

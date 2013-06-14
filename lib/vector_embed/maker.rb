@@ -2,6 +2,7 @@ require 'vector_embed/maker/phrase'
 require 'vector_embed/maker/ngram'
 require 'vector_embed/maker/number'
 require 'vector_embed/maker/boolean'
+require 'vector_embed/maker/date'
 
 class VectorEmbed
   class Maker

@@ -19,7 +19,7 @@ class VectorEmbed
   F = /\Af\z/i
   NULL_BYTE = "\x00"
   LABEL_MAKERS =   [Maker::Boolean, Maker::Number]
-  FEATURE_MAKERS = [Maker::Boolean, Maker::Number, Maker::Ngram, Maker::Phrase]
+  FEATURE_MAKERS = [Maker::Boolean, Maker::Date, Maker::Number, Maker::Ngram, Maker::Phrase]
 
   attr_reader :options
   attr_accessor :logger

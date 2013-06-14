@@ -128,6 +128,22 @@ describe VectorEmbed do
       v.line(1, 1 => '9e9').should == "1 #{l_h('1')}:9000000000"
     end
 
+    it "stores dates as days since 2000-01-01" do
+      v = VectorEmbed.new
+      v.line(1, 3 => Date.new(1999,12,31)).should == "1 #{l_h('3')}:-1"
+      v.line(1, 3 => Date.new(2000,1,1)).should == "1"
+      v.line(1, 3 => Date.new(2000,1,2)).should == "1 #{l_h('3')}:1"
+      v.line(1, 3 => Date.new(2000,1,3)).should == "1 #{l_h('3')}:2"
+    end
+
+    it "can parse some dates" do
+      v = VectorEmbed.new(features: { 3 => :Date})
+      v.line(1, 3 => '1999-12-31').should == "1 #{l_h('3')}:-1"
+      v.line(1, 3 => '2000-1-1').should == "1"
+      v.line(1, 3 => '2000-1-2').should == "1 #{l_h('3')}:1"
+      v.line(1, 3 => '2000-1-3').should == "1 #{l_h('3')}:2"
+    end
+
     it "does not output 0 in number attributes" do
       v = VectorEmbed.new
       v.line(3, 1 => 1)

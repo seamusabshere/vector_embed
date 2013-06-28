@@ -162,13 +162,12 @@ describe VectorEmbed do
       v.line(1, 1 => nil).should == v.line(1, 1 => 0)
     end
 
-    it "assumes nil value means a number field" do
+    it "assumes nil value means a string field" do
       v = VectorEmbed.new
-      v.line(3, 1 => nil) # don't establish it's a number
-      v.line(3, 1 => nil).should == v.line(3, 1 => 0)
-      v.line(3, 1 => 'null').should == v.line(3, 1 => 0)
-      v.line(3, 1 => 'NULL').should == v.line(3, 1 => 0)
-      v.line(3, 1 => '\N').should == v.line(3, 1 => 0)
+      v.line(3, 1 => nil).should == "3 #{l_h("1\x00")}:1"
+      v.line(3, 1 => 'null').should == "3 #{l_h("1\x00null")}:1"
+      v.line(3, 1 => 'NULL').should == "3 #{l_h("1\x00NULL")}:1"
+      v.line(3, 1 => '\N').should == "3 #{l_h("1\x00\\N")}:1"
     end
 
     it "stores strings as m-category attributes" do

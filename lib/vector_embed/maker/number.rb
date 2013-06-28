@@ -6,7 +6,7 @@ class VectorEmbed
       class << self
         def want?(v, parent)
           case v
-          when Numeric, NilClass, NULL, SLASH_N
+          when Numeric, SLASH_N
             true
           else
             v =~ JUST_A_NUMBER

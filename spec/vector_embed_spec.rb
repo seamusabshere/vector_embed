@@ -171,7 +171,7 @@ describe VectorEmbed do
       v.line(3, 1 => '\N').should == v.line(3, 1 => 0)
     end
 
-    it "stores strings as m-category attributes" do
+    it "stores strings as m-category attributes, ignoring whitespace" do
       v = VectorEmbed.new
       v.line(1, 1 => 'sfh').should == "1 #{l_h("1\x00sfh")}:1"
       v.line(1, 1 => 'mfh').should == "1 #{l_h("1\x00mfh")}:1"

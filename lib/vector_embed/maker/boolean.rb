@@ -27,9 +27,9 @@ class VectorEmbed
 
       def pairs(v)
         case v
-        when TrueClass, TRUE, T
+        when TrueClass, TRUE, T, 1, '1'
           [ [ parent.index([k, 'true']), 1 ] ]
-        when FalseClass, FALSE, F
+        when FalseClass, FALSE, F, 0, '0'
           [ [ parent.index([k, 'false']), 1 ] ]
         when NilClass, NULL, SLASH_N, BLANK
           [ [ parent.index([k, 'null']), 1 ] ]

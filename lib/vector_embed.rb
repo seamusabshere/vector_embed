@@ -29,7 +29,7 @@ class VectorEmbed
     @options = options.dup
     @mutex = Mutex.new
     @feature_makers = {}
-    @logger = options[:logger] || (l = Logger.new($stderr); l.level = Logger::INFO; l)
+    @logger = options[:logger] || (l = Logger.new($stderr); l.level = (ENV['VERBOSE'] == 'true') ? Logger::DEBUG : Logger::INFO; l)
     if dict = @options.delete(:dict)
       @dict = dict.dup
     end

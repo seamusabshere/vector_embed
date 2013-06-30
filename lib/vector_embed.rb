@@ -21,15 +21,16 @@ class VectorEmbed
   LABEL_MAKERS =   [Maker::Boolean, Maker::Number]
   FEATURE_MAKERS = [Maker::Boolean, Maker::Date, Maker::Number, Maker::Ngram, Maker::Phrase]
 
-  attr_reader :options
   attr_accessor :logger
   attr_reader :dict
+  attr_reader :options
+  attr_reader :feature_makers
 
   def initialize(options = {})
     @options = options.dup
     @mutex = Mutex.new
     @feature_makers = {}
-    @logger = options[:logger] || (l = Logger.new($stderr); l.level = Logger::INFO; l)
+    @logger = options[:logger] || (l = Logger.new($stderr); l.level = (ENV['VERBOSE'] == 'true') ? Logger::DEBUG : Logger::INFO; l)
     if dict = @options.delete(:dict)
       @dict = dict.dup
     end
@@ -62,12 +63,41 @@ class VectorEmbed
     k = parts.join NULL_BYTE
     if dict
       k = Digest::MD5.digest k
-      dict[k] || @mutex.synchronize do
-        dict[k] ||= dict.length + 1
+      dict[k] ||= @mutex.synchronize do
+        if dict[k]
+          dict[k]
+        else
+          @feature_makers[parts.first].cardinality += 1
+          dict[k] = dict.length + 1
+        end
       end
     else
       MurmurHash3::V32.str_hash(k).to_s[0..6].to_i
     end
+  end
+
+  def stats_report
+    report = feature_makers.map do |feature, maker|
+      [feature, maker.class, maker.cardinality]
+    end
+    total_cardinality = report.inject(0) { |sum, row| sum += row[2]; sum }
+
+    report.unshift %w{ Feature Class Cardinality }
+    feature_width     = report.map { |row| row[0].to_s.length }.max
+    class_width       = report.map { |row| row[1].to_s.length }.max
+    cardinality_width = report.map { |row| row[2].to_s.length }.max
+
+    report = report.map do |row|
+      [
+        row[0].to_s.ljust(feature_width),
+        row[1].to_s.ljust(class_width),
+        row[2].to_s.rjust(cardinality_width),
+      ].join(' | ')
+    end
+    total_width = report.first.length
+    report.insert(1, ''.ljust(total_width, '-'))
+    report.push(total_cardinality.to_s.rjust(total_width))
+    report.push('').join("\n")
   end
 
   private

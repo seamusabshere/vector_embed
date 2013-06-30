@@ -101,20 +101,28 @@ describe VectorEmbed do
     describe 'in boolean attributes' do
       it "stores true/false/nil as (1,0,0)/(0,1,0)/(0,0,1)" do
         v = VectorEmbed.new
-        v.line(1, 1 => true).should == "1 #{l_h("1\x00true")}:1"
+        v.line(1, 1 => true).should   == "1 #{l_h("1\x00true")}:1"
         v.line(1, 1 => 'true').should == "1 #{l_h("1\x00true")}:1"
         v.line(1, 1 => 'TRUE').should == "1 #{l_h("1\x00true")}:1"
-        v.line(1, 1 => 't').should == "1 #{l_h("1\x00true")}:1"
-        v.line(1, 1 => 'T').should == "1 #{l_h("1\x00true")}:1"
-        v.line(1, 1 => false).should == "1 #{l_h("1\x00false")}:1"
+        v.line(1, 1 => 't').should    == "1 #{l_h("1\x00true")}:1"
+        v.line(1, 1 => 'T').should    == "1 #{l_h("1\x00true")}:1"
+        v.line(1, 1 => 1).should      == "1 #{l_h("1\x00true")}:1"
+        v.line(1, 1 => '1').should    == "1 #{l_h("1\x00true")}:1"
+
+        v.line(1, 1 => false).should   == "1 #{l_h("1\x00false")}:1"
         v.line(1, 1 => 'false').should == "1 #{l_h("1\x00false")}:1"
         v.line(1, 1 => 'FALSE').should == "1 #{l_h("1\x00false")}:1"
-        v.line(1, 1 => 'f').should == "1 #{l_h("1\x00false")}:1"
-        v.line(1, 1 => 'F').should == "1 #{l_h("1\x00false")}:1"
-        v.line(1, 1 => nil).should == "1 #{l_h("1\x00null")}:1"
+        v.line(1, 1 => 'f').should     == "1 #{l_h("1\x00false")}:1"
+        v.line(1, 1 => 'F').should     == "1 #{l_h("1\x00false")}:1"
+        v.line(1, 1 => 0).should       == "1 #{l_h("1\x00false")}:1"
+        v.line(1, 1 => '0').should     == "1 #{l_h("1\x00false")}:1"
+
+        v.line(1, 1 => nil).should    == "1 #{l_h("1\x00null")}:1"
         v.line(1, 1 => 'null').should == "1 #{l_h("1\x00null")}:1"
         v.line(1, 1 => 'NULL').should == "1 #{l_h("1\x00null")}:1"
-        v.line(1, 1 => '\N').should == "1 #{l_h("1\x00null")}:1"
+        v.line(1, 1 => '\N').should   == "1 #{l_h("1\x00null")}:1"
+        v.line(1, 1 => '').should     == "1 #{l_h("1\x00null")}:1"
+        v.line(1, 1 => " \t ").should == "1 #{l_h("1\x00null")}:1"
       end
     end
 
@@ -171,7 +179,7 @@ describe VectorEmbed do
       v.line(3, 1 => '\N').should == v.line(3, 1 => 0)
     end
 
-    it "stores strings as m-category attributes" do
+    it "stores strings as m-category attributes, ignoring whitespace" do
       v = VectorEmbed.new
       v.line(1, 1 => 'sfh').should == "1 #{l_h("1\x00sfh")}:1"
       v.line(1, 1 => 'mfh').should == "1 #{l_h("1\x00mfh")}:1"
@@ -304,6 +312,37 @@ describe VectorEmbed do
       v.line(1, 1 => false).should == "1 #{l_h("1\x00false")}:1"
       v.line(1, 1 => nil).should == "1 #{l_h("1\x00")}:1"
       v.line(1, 1 => nil).should == v.line(1, 1 => '')
+    end
+  end
+
+  describe '#stats_report' do
+    it "reports statistics on the embedded features" do
+      v = VectorEmbed.new dict: {}
+      v.line(1, 1 => 1)
+      v.line(1, 1 => 2)
+      v.line(1, 2 => 1)
+      v.line(1, 2 => nil)
+      v.line(1, 3 => '2010-01-01')
+      v.line(1, 3 => '2011-01-01')
+      v.line(1, 4 => true)
+      v.line(1, 5 => true)
+      v.line(1, 5 => false)
+      v.line(1, 5 => nil)
+      v.line(1, 'foo' => 'bar')
+      v.line(1, 'foo' => 'biz')
+      v.line(1, 'foo' => 'baz')
+      v.stats_report.should == [
+        'Feature | Class                       | Cardinality',
+        '---------------------------------------------------',
+        '1       | VectorEmbed::Maker::Number  |           1',
+        '2       | VectorEmbed::Maker::Number  |           1',
+        '3       | VectorEmbed::Maker::Date    |           1',
+        '4       | VectorEmbed::Maker::Boolean |           1',
+        '5       | VectorEmbed::Maker::Boolean |           3',
+        'foo     | VectorEmbed::Maker::Phrase  |           3',
+        '                                                 10',
+        '',
+      ].join("\n")
     end
   end
 

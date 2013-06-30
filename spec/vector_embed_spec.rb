@@ -315,6 +315,37 @@ describe VectorEmbed do
     end
   end
 
+  describe '#stats_report' do
+    it "reports statistics on the embedded features" do
+      v = VectorEmbed.new dict: {}
+      v.line(1, 1 => 1)
+      v.line(1, 1 => 2)
+      v.line(1, 2 => 1)
+      v.line(1, 2 => nil)
+      v.line(1, 3 => '2010-01-01')
+      v.line(1, 3 => '2011-01-01')
+      v.line(1, 4 => true)
+      v.line(1, 5 => true)
+      v.line(1, 5 => false)
+      v.line(1, 5 => nil)
+      v.line(1, 'foo' => 'bar')
+      v.line(1, 'foo' => 'biz')
+      v.line(1, 'foo' => 'baz')
+      v.stats_report.should == [
+        'Feature | Class                       | Cardinality',
+        '---------------------------------------------------',
+        '1       | VectorEmbed::Maker::Number  |           1',
+        '2       | VectorEmbed::Maker::Number  |           1',
+        '3       | VectorEmbed::Maker::Date    |           1',
+        '4       | VectorEmbed::Maker::Boolean |           1',
+        '5       | VectorEmbed::Maker::Boolean |           3',
+        'foo     | VectorEmbed::Maker::Phrase  |           3',
+        '                                                 10',
+        '',
+      ].join("\n")
+    end
+  end
+
   private
 
   def h(v)

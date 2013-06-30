@@ -20,12 +20,14 @@ class VectorEmbed
       end
     end
 
+    attr_accessor :cardinality
     attr_reader :parent
     attr_reader :k
 
     def initialize(k, parent)
       @k = k
       @parent = parent
+      @cardinality = 0
     end
 
     def pairs(v)
@@ -39,7 +41,7 @@ class VectorEmbed
         end
         memo
       else
-        if (vv = value(v)).nil?
+        if value(v).nil?
           []
         else
           [ [ parent.index([k]), value(v) ] ]

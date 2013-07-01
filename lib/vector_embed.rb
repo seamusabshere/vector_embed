@@ -24,7 +24,6 @@ class VectorEmbed
   attr_accessor :logger
   attr_reader :dict
   attr_reader :options
-  attr_reader :feature_makers
 
   def initialize(options = {})
     @options = options.dup
@@ -60,24 +59,23 @@ class VectorEmbed
   end
 
   def index(parts)
-    k = parts.join NULL_BYTE
+    sig = parts.join NULL_BYTE
     if dict
-      k = Digest::MD5.digest k
-      dict[k] || @mutex.synchronize do
-        dict[k] ||= if dict[k]
-          dict[k]
-        else
-          @feature_makers[parts.first].cardinality += 1
-          dict[k] = dict.length + 1
+      sig = Digest::MD5.digest sig
+      dict[sig] || @mutex.synchronize do
+        dict[sig] ||= begin
+          k = parts[0]
+          @feature_makers[k].cardinality += 1
+          dict[sig] = dict.length + 1
         end
       end
     else
-      MurmurHash3::V32.str_hash(k).to_s[0..6].to_i
+      MurmurHash3::V32.str_hash(sig).to_s[0..6].to_i
     end
   end
 
   def stats_report
-    report = feature_makers.map do |feature, maker|
+    report = @feature_makers.map do |feature, maker|
       [feature, maker.class, maker.cardinality]
     end
     total_cardinality = report.inject(0) { |sum, row| sum += row[2]; sum }

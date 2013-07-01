@@ -63,8 +63,8 @@ class VectorEmbed
     k = parts.join NULL_BYTE
     if dict
       k = Digest::MD5.digest k
-      dict[k] ||= @mutex.synchronize do
-        if dict[k]
+      dict[k] || @mutex.synchronize do
+        dict[k] ||= if dict[k]
           dict[k]
         else
           @feature_makers[parts.first].cardinality += 1

@@ -1,3 +1,13 @@
+0.4.0 / 2013-07-01
+
+* Breaking changes
+
+  * Treat 0/1 and '0'/'1' as true/false (per @ihough)
+
+* Enhancements
+
+  * Add VectorEmbed#stats_report, which lists types and cardinalities of features (thanks @ihough)
+
 0.3.3 / 2013-06-14
 
 * Enhancement

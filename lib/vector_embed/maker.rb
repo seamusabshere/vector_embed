@@ -41,10 +41,10 @@ class VectorEmbed
         end
         memo
       else
-        if value(v).nil?
+        if (vv = value(v)).nil?
           []
         else
-          [ [ parent.index([k]), value(v) ] ]
+          [ [ parent.index([k]), vv ] ]
         end
       end
     end

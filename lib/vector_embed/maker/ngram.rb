@@ -31,7 +31,7 @@ class VectorEmbed
         else
           raise "Word n-gram not supported yet"
         end.map do |ngram|
-          [ [ parent.index([k, 'ngram', ngram]), 1 ] ]
+          [ parent.index([k, 'ngram', ngram]), 1 ]
         end
       end
     end

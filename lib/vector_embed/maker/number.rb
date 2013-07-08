@@ -8,8 +8,8 @@ class VectorEmbed
           case v
           when Numeric, NilClass, NULL, SLASH_N
             true
-          else
-            v =~ JUST_A_NUMBER
+          when String
+            v =~ JUST_A_NUMBER or v =~ UGLY_FLOAT
           end
         end
 
@@ -31,7 +31,7 @@ class VectorEmbed
 
       def value(v)
         case v
-        when Numeric, JUST_A_NUMBER
+        when Numeric, JUST_A_NUMBER, UGLY_FLOAT
           Number.numify v
         when NilClass, NULL, SLASH_N
           nil

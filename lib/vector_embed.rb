@@ -10,6 +10,7 @@ require 'vector_embed/stop_word'
 class VectorEmbed
   # http://stackoverflow.com/questions/638565/parsing-scientific-notation-sensibly
   JUST_A_NUMBER = /\A\s*[+\-]?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?\s*\z/
+  UGLY_FLOAT = /\A\.\d+\z/
   BLANK = /\A\s*\z/
   NULL = /\Anull\z/i
   SLASH_N = '\N'

@@ -1,3 +1,9 @@
+unreleased
+
+* Breaking changes
+
+  * Treat .1 as 0.1
+
 0.4.0 / 2013-07-01
 
 * Breaking changes

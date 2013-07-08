@@ -136,6 +136,11 @@ describe VectorEmbed do
       v.line(1, 1 => '9e9').should == "1 #{l_h('1')}:9000000000"
     end
 
+    it "is ok with floats that don't start with 0" do
+      v = VectorEmbed.new
+      v.line(3, 5 => '.9').should == "3 #{l_h('5')}:0.9"
+    end
+
     it "stores dates as days since 2000-01-01" do
       v = VectorEmbed.new
       v.line(1, 3 => Date.new(1999,12,31)).should == "1 #{l_h('3')}:-1"

@@ -20,7 +20,7 @@ class VectorEmbed
       end
 
       def pairs(v)
-        raise "Ngram can't handle #{v.inspect}, only a single string for now" unless v.is_a?(String)
+        raise "Ngram can't handle #{v.inspect}, only a single string for now" unless v.is_a?(::String)
         v = parent.preprocess v.to_s
         if len == 1
           # word mode

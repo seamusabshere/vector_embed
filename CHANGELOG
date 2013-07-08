@@ -1,8 +1,12 @@
-unreleased
+0.5.0 / 2013-07-08
 
 * Breaking changes
 
   * Treat .1 as 0.1
+
+* Bug fixes
+
+  * Fix error when mixing ngrams and phrases
 
 0.4.0 / 2013-07-01
 

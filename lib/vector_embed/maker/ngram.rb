@@ -9,6 +9,9 @@ class VectorEmbed
         end
       end
 
+      # TODO make sure you can't collide with these
+      IM_AN_NGRAM = 'ngram'
+
       attr_reader :len
       attr_reader :delim
 
@@ -31,7 +34,7 @@ class VectorEmbed
         else
           raise "Word n-gram not supported yet"
         end.map do |ngram|
-          [ parent.index([k, 'ngram', ngram]), 1 ]
+          [ parent.index([k, IM_AN_NGRAM, ngram]), 1 ]
         end
       end
     end

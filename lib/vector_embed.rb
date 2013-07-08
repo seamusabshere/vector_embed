@@ -47,7 +47,13 @@ class VectorEmbed
       end
       memo
     end.compact.sort_by do |k_value, _|
-      k_value
+      # weird, why is k_value ever an array here?
+      case k_value
+      when Array
+        k_value[0]
+      else
+        k_value
+      end
     end.map do |pair|
       pair.join ':'
     end

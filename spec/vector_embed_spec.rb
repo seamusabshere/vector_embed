@@ -300,6 +300,12 @@ describe VectorEmbed do
       v.line(1, 1 => 'foo', 2 => 'bar', 'baz' => 'zoo').should == sortme("1 #{l_h("1\x00foo")}:1 #{l_h("2\x00bar")}:1 #{l_h("baz\x00zoo")}:1")
     end
 
+    it "simultaneously produces phrases and n-grams" do
+      v = VectorEmbed.new ngram_len: 2, ngram_delim: '', features: { 2 => :Phrase }
+      v.line(3, 1 => 'foo', 2 => 'bar').should == sortme("3 #{l_h("1\x00ngram\x00fo")}:1 #{l_h("1\x00ngram\x00oo")}:1 #{l_h("2\x00bar")}:1")
+
+    end
+
   end
 
   describe 'hinting' do

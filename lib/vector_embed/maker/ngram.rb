@@ -9,6 +9,9 @@ class VectorEmbed
         end
       end
 
+      # TODO make sure you can't collide with these
+      IM_AN_NGRAM = 'ngram'
+
       attr_reader :len
       attr_reader :delim
 
@@ -20,7 +23,7 @@ class VectorEmbed
       end
 
       def pairs(v)
-        raise "Ngram can't handle #{v.inspect}, only a single string for now" unless v.is_a?(String)
+        raise "Ngram can't handle #{v.inspect}, only a single string for now" unless v.is_a?(::String)
         v = parent.preprocess v.to_s
         if len == 1
           # word mode
@@ -31,7 +34,7 @@ class VectorEmbed
         else
           raise "Word n-gram not supported yet"
         end.map do |ngram|
-          [ [ parent.index([k, 'ngram', ngram]), 1 ] ]
+          [ parent.index([k, IM_AN_NGRAM, ngram]), 1 ]
         end
       end
     end

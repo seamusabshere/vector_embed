@@ -15,7 +15,7 @@ class VectorEmbed
       attr_reader :len
       attr_reader :delim
 
-      def initialize(k, parent)
+      def initialize(k, parent, options = nil)
         super
         @len = parent.options[:ngram_len].to_i
         raise ArgumentError, ":ngram_len must be > 0" unless @len > 0

@@ -23,21 +23,28 @@ class VectorEmbed
           else
             v
           end
-          if num.nonzero?
-            '%.16g' % num
-          end
         end
       end
+      
+      FORMAT = '%.16g'
 
       def value(v)
         case v
         when Numeric, JUST_A_NUMBER, UGLY_FLOAT
-          Number.numify v
+          num = Number.numify v
+          if num.nonzero? or keep_zero?
+            FORMAT % num
+          end
         when NilClass, NULL, SLASH_N
           nil
         else
           raise ArgumentError, "Can't embed #{v.inspect} in number feature #{k.inspect}"
         end
+      end
+
+      def keep_zero?
+        return @keep_zero_query if defined?(@keep_zero_query)
+        @keep_zero = options && !!options[:keep_zero]
       end
     end
   end

@@ -12,6 +12,7 @@ describe VectorEmbed do
 
     it "stores numbers as numbers" do
       v = VectorEmbed.new
+      v.line(0).should == '0'
       v.line(5.4).should == '5.4'
       v.line(-3.9).should == '-3.9'
     end

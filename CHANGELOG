@@ -1,3 +1,9 @@
+0.5.1 / 2013-07-09
+
+* Bug fixes
+
+  * Don't drop 0 labels like you would for features (sorry!)
+
 0.5.0 / 2013-07-08
 
 * Breaking changes

@@ -109,7 +109,7 @@ class VectorEmbed
 
   def label_maker(label)
     @label_maker || @mutex.synchronize do
-      @label_maker ||= Maker.pick(LABEL_MAKERS, 'label', label, self)
+      @label_maker ||= Maker.pick(LABEL_MAKERS, 'label', label, self, keep_zero: true)
     end
   end
 

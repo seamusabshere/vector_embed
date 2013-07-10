@@ -170,6 +170,14 @@ describe VectorEmbed do
       v.line(3, 1 => '0').should == "3"
     end
 
+    it "does not output blank strings in phrase attributes" do
+      v = VectorEmbed.new
+      v.line(3, 5 => 'hello').should == "3 #{l_h("5\x00hello")}:1"
+      v.line(3, 5 => nil).should == "3 #{l_h("5\x00")}:1"
+      v.line(3, 5 => '').should == "3 #{l_h("5\x00")}:1"
+      v.line(3, 5 => ' ').should == "3 #{l_h("5\x00")}:1"
+    end
+
     it "treats nil like zero in number attributes" do
       v = VectorEmbed.new
       v.line(1, 1 => 1) # establish it's a number

@@ -36,7 +36,7 @@ class VectorEmbed
             FORMAT % num
           end
         when NilClass, NULL, SLASH_N
-          nil
+          keep_zero? ? 0 : nil
         else
           raise ArgumentError, "Can't embed #{v.inspect} in number feature #{k.inspect}"
         end

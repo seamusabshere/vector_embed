@@ -30,6 +30,25 @@ describe VectorEmbed do
       v.line(true)
       lambda { v.line(5.4) }.should raise_error(/Can't embed.*boolean/)
     end
+
+    it "stores nil as 0 in number" do
+      v = VectorEmbed.new
+      v.line(1)
+      v.line(nil).should == '0'
+    end
+
+    it "doesn't let you store nil in boolean" do
+      v = VectorEmbed.new
+      v.line(true)
+      lambda { v.line(nil) }.should raise_error(/Can't embed.*boolean/)
+    end
+
+    it "treats nil as evidence of number" do
+      v = VectorEmbed.new
+      v.line(nil).should == '0'
+      v.line(1).should == '1'
+    end
+
   end
 
   describe 'using a dictionary' do

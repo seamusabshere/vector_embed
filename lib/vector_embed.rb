@@ -62,7 +62,7 @@ class VectorEmbed
   def index(parts)
     sig = parts.join NULL_BYTE
     if dict
-      sig = Digest::MD5.digest sig
+      # sig = Digest::MD5.digest sig
       dict[sig] || @mutex.synchronize do
         dict[sig] ||= begin
           k = parts[0]

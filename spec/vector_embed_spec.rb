@@ -70,7 +70,7 @@ describe VectorEmbed do
       require 'digest/md5'
       v = VectorEmbed.new dict: {}
       v.line(1, 'foo' => 5)
-      v.dict.should == { Digest::MD5.digest('foo') => 1 }
+      v.dict.should == { 'foo' => 1 }
     end
   end
 

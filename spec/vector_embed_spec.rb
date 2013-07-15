@@ -71,6 +71,11 @@ describe VectorEmbed do
       v.line(1, 'foo' => 5)
       v.dict.should == { 'foo' => 1 }
     end
+
+    it "can be fooled" do
+      v = VectorEmbed.new
+      v.line(3, 'foo' => 'red').should == v.line(3, "foo\x00red" => 1)
+    end
   end
 
   # aka dimension indexes

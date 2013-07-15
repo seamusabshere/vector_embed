@@ -67,7 +67,6 @@ describe VectorEmbed do
     end
 
     it "provides the latest dict on demand" do
-      require 'digest/md5'
       v = VectorEmbed.new dict: {}
       v.line(1, 'foo' => 5)
       v.dict.should == { 'foo' => 1 }

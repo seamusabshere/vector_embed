@@ -1,5 +1,4 @@
 require 'logger'
-require 'digest/md5'
 require 'murmurhash3'
 
 require 'vector_embed/version'
@@ -62,7 +61,6 @@ class VectorEmbed
   def index(parts)
     sig = parts.join NULL_BYTE
     if dict
-      # sig = Digest::MD5.digest sig
       dict[sig] || @mutex.synchronize do
         dict[sig] ||= begin
           k = parts[0]
